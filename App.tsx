@@ -33,7 +33,7 @@ const AppContent: React.FC = () => {
       className={`flex-1 flex flex-col sm:flex-row items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-amber-400 rounded-lg ${
         activeView === view
           ? 'bg-amber-500 text-gray-900 shadow-lg'
-          : 'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white'
+          : 'bg-gray-700 text-gray-200 hover:bg-gray-600 hover:text-white'
       }`}
     >
       {icon}
@@ -71,7 +71,7 @@ const AppContent: React.FC = () => {
             {t('appTitle')}
           </h1>
         </div>
-        <p className="text-gray-400">{t('appSubtitle')}</p>
+        <p className="text-gray-300">{t('appSubtitle')}</p>
       </header>
 
       <nav className="flex flex-wrap gap-2 sm:gap-4 p-2 bg-gray-800 rounded-xl shadow-md mb-6">
@@ -96,7 +96,7 @@ const AppContent: React.FC = () => {
         <ViewWrapper view="history" activeView={activeView} children={<MarketingHistory history={history} setHistory={setHistory} isStandalonePage={true} />} />
       </main>
       
-      <footer className="text-center mt-8 text-gray-500 text-xs">
+      <footer className="text-center mt-8 text-gray-400 text-xs">
           <p>{t('footerCommunity')}</p>
           <div className="flex justify-center gap-4 mt-2">
               <a href="https://www.youtube.com/@fe10minutos" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 transition-colors">Fé em 10 Minutos</a>

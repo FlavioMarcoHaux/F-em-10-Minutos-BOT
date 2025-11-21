@@ -1,5 +1,4 @@
 
-
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { generateSpeech, generateImageFromPrayer, generateVideo, createMediaPromptFromPrayer } from '../services/geminiService';
 import { SpinnerIcon, DownloadIcon } from './icons';
@@ -143,7 +142,8 @@ export const PrayerGenerator: React.FC<PrayerGeneratorProps> = ({ titleKey, desc
         setImageError('');
         setImageBlob(null);
         try {
-            const visualPrompt = await createMediaPromptFromPrayer(prayer);
+            // Fix: Pass the `language` parameter to the `createMediaPromptFromPrayer` function.
+            const visualPrompt = await createMediaPromptFromPrayer(prayer, language);
             const base64Image = await generateImageFromPrayer(visualPrompt, imageAspectRatio);
             const imageResponse = await fetch(`data:image/png;base64,${base64Image}`);
             const imageBlob = await imageResponse.blob();
@@ -179,7 +179,8 @@ export const PrayerGenerator: React.FC<PrayerGeneratorProps> = ({ titleKey, desc
             if (!apiKeySelected) {
                 throw new Error("API key not selected.");
             }
-            const visualPrompt = await createMediaPromptFromPrayer(prayer);
+            // Fix: Pass the `language` parameter to the `createMediaPromptFromPrayer` function.
+            const visualPrompt = await createMediaPromptFromPrayer(prayer, language);
             const downloadLink = await generateVideo(visualPrompt, videoAspectRatio);
             const response = await fetch(`${downloadLink}&key=${process.env.API_KEY}`);
             if (!response.ok) {
@@ -222,7 +223,7 @@ export const PrayerGenerator: React.FC<PrayerGeneratorProps> = ({ titleKey, desc
         <div className="bg-gray-800 p-6 rounded-xl shadow-lg animate-fade-in space-y-6">
             <div>
                 <h2 className="text-2xl font-bold text-amber-400 mb-2">{t(titleKey)}</h2>
-                <p className="text-gray-400">{t(descriptionKey)}</p>
+                <p className="text-gray-300">{t(descriptionKey)}</p>
             </div>
 
             <div className="space-y-4">
@@ -244,21 +245,21 @@ export const PrayerGenerator: React.FC<PrayerGeneratorProps> = ({ titleKey, desc
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">{t('prayerDefineTheme')}</label>
+                    <label className="block text-sm font-medium text-gray-200 mb-2">{t('prayerDefineTheme')}</label>
                     <div className="flex flex-col sm:flex-row gap-2">
                         <input
                             type="text"
                             value={prompt}
                             onChange={(e) => setPrompt(e.target.value)}
                             placeholder={t('prayerPlaceholder')}
-                            className="flex-grow bg-gray-700 text-white placeholder-gray-500 p-3 rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-amber-500 transition"
+                            className="flex-grow bg-gray-700 text-white placeholder-gray-400 p-3 rounded-lg border border-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500 transition"
                             disabled={isLoading}
                         />
                          {showDurationSelector && (
                              <select
                                 value={duration}
                                 onChange={(e) => setDuration(Number(e.target.value))}
-                                className="bg-gray-700 text-white p-3 rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-amber-500 transition"
+                                className="bg-gray-700 text-white p-3 rounded-lg border border-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500 transition"
                                 disabled={isLoading}
                                 aria-label={t('prayerDurationLabel')}
                             >
@@ -284,7 +285,7 @@ export const PrayerGenerator: React.FC<PrayerGeneratorProps> = ({ titleKey, desc
             {prayer && (
                 <div className="mt-6 p-6 bg-gray-900 rounded-lg border border-gray-700" aria-live="polite">
                     <h3 className="text-xl font-semibold text-amber-300 mb-3">{t('prayerHeader')}</h3>
-                    <p className="text-gray-300 whitespace-pre-wrap leading-relaxed max-h-60 overflow-y-auto">{prayer}</p>
+                    <p className="text-gray-100 whitespace-pre-wrap leading-relaxed max-h-60 overflow-y-auto">{prayer}</p>
                 </div>
             )}
 
@@ -306,7 +307,7 @@ export const PrayerGenerator: React.FC<PrayerGeneratorProps> = ({ titleKey, desc
                             </div>
                        )}
                        {audioError && <p className="text-red-400 text-sm mt-2">{audioError}</p>}
-                       {isAudioLoadingFromDB && <div className="text-center text-gray-400 italic text-xs">Loading saved audio... <SpinnerIcon/></div>}
+                       {isAudioLoadingFromDB && <div className="text-center text-gray-300 italic text-xs">Loading saved audio... <SpinnerIcon/></div>}
                        {audioUrl && !isAudioLoading && (
                             <div className="flex items-center gap-4 mt-2">
                                 <audio controls src={audioUrl} className="w-full max-w-sm"></audio>
@@ -315,13 +316,13 @@ export const PrayerGenerator: React.FC<PrayerGeneratorProps> = ({ titleKey, desc
                                 </a>
                             </div>
                        )}
-                       <p className="text-xs text-gray-500 pl-1">{t('audioInfo')}</p>
+                       <p className="text-xs text-gray-400 pl-1">{t('audioInfo')}</p>
                     </div>
 
                     {/* Image Generation */}
                     <div className="space-y-4">
                         <div className="flex flex-wrap items-center gap-4">
-                            <label htmlFor={`image-aspect-ratio-${storageKeyPrefix}`} className="font-semibold text-gray-300">{t('aspectRatio')}:</label>
+                            <label htmlFor={`image-aspect-ratio-${storageKeyPrefix}`} className="font-semibold text-gray-200">{t('aspectRatio')}:</label>
                             <select
                                 id={`image-aspect-ratio-${storageKeyPrefix}`}
                                 value={imageAspectRatio}
@@ -339,10 +340,10 @@ export const PrayerGenerator: React.FC<PrayerGeneratorProps> = ({ titleKey, desc
                        <button onClick={handleGenerateImage} disabled={isAnyMediaGenerating} className="flex items-center justify-center bg-sky-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-sky-600 transition-all duration-300 disabled:bg-gray-600 disabled:cursor-not-allowed">
                            {isImageLoading ? <><SpinnerIcon /> {t('generatingImage')}</> : t('generateImage')}
                        </button>
-                       <p className="text-xs text-gray-500 pl-1">{t('imageInfoBilled')}</p>
+                       <p className="text-xs text-gray-400 pl-1">{t('imageInfoBilled')}</p>
                        {imageError && <p className="text-red-400 text-sm">{imageError}</p>}
                         {isImageLoading && <div className="flex justify-center"><SpinnerIcon /></div>}
-                        {isImageLoadingFromDB && <div className="text-center text-gray-400 italic text-xs">Loading saved image... <SpinnerIcon/></div>}
+                        {isImageLoadingFromDB && <div className="text-center text-gray-300 italic text-xs">Loading saved image... <SpinnerIcon/></div>}
                         {imageUrl && (
                             <div className="mt-4 text-center">
                                 <img src={imageUrl} alt="Generated art" className="rounded-lg max-w-sm mx-auto shadow-lg" />
@@ -357,7 +358,7 @@ export const PrayerGenerator: React.FC<PrayerGeneratorProps> = ({ titleKey, desc
                     {/* Video Generation */}
                     <div className="space-y-4">
                         <div className="flex flex-wrap items-center gap-4">
-                            <label htmlFor={`video-aspect-ratio-${storageKeyPrefix}`} className="font-semibold text-gray-300">{t('aspectRatio')}:</label>
+                            <label htmlFor={`video-aspect-ratio-${storageKeyPrefix}`} className="font-semibold text-gray-200">{t('aspectRatio')}:</label>
                             <select
                                 id={`video-aspect-ratio-${storageKeyPrefix}`}
                                 value={videoAspectRatio}
@@ -379,9 +380,9 @@ export const PrayerGenerator: React.FC<PrayerGeneratorProps> = ({ titleKey, desc
                                 <a href="https://ai.google.dev/gemini-api/docs/billing" target="_blank" rel="noopener noreferrer" className="ml-4 text-xs underline hover:text-white">{t('apiKeyLink')}</a>
                             </div>
                         )}
-                        <p className="text-xs text-gray-500 pl-1">{t('videoRateLimitWarning')}</p>
+                        <p className="text-xs text-gray-400 pl-1">{t('videoRateLimitWarning')}</p>
                        {videoError && <p className="text-red-400 text-sm">{videoError}</p>}
-                       {isVideoLoading && <div className="text-center text-gray-400 italic">Video generation can take a few minutes... <SpinnerIcon/></div>}
+                       {isVideoLoading && <div className="text-center text-gray-300 italic">Video generation can take a few minutes... <SpinnerIcon/></div>}
                        {videoUrl && (
                            <div className="mt-4 text-center">
                                 <video src={videoUrl} controls className="rounded-lg max-w-sm mx-auto shadow-lg" />

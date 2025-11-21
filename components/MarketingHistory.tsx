@@ -82,7 +82,7 @@ export const MarketingHistory: React.FC<MarketingHistoryProps> = ({ history, set
             <div className="p-2 bg-gray-900 rounded-lg space-y-3">
                 <div className="flex flex-col sm:flex-row gap-4 items-center">
                     <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium text-gray-400">{t('historyFilterLanguage')}</span>
+                        <span className="text-sm font-medium text-gray-300">{t('historyFilterLanguage')}</span>
                         <div className="flex gap-1.5 p-1 bg-gray-800 rounded-lg">
                            <FilterButton lang="all" label={t('historyAll')} />
                            <FilterButton lang="pt" label="PT" />
@@ -96,7 +96,7 @@ export const MarketingHistory: React.FC<MarketingHistoryProps> = ({ history, set
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             placeholder={t('historySearchPlaceholder')}
-                            className="w-full bg-gray-700 text-white placeholder-gray-500 p-2 rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-amber-500 transition text-sm"
+                            className="w-full bg-gray-700 text-white placeholder-gray-400 p-2 rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-amber-500 transition text-sm"
                         />
                     </div>
                 </div>
@@ -108,7 +108,7 @@ export const MarketingHistory: React.FC<MarketingHistoryProps> = ({ history, set
                         <HistoryItemCard key={item.id} item={item} onDelete={handleDeleteItem} setHistory={setHistory}/>
                     ))
                 ) : (
-                    <div className="text-center py-8 text-gray-500">
+                    <div className="text-center py-8 text-gray-400">
                         <p>{t('marketingNoHistory')}</p>
                     </div>
                 )}

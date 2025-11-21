@@ -158,9 +158,9 @@ export const HistoryItemCard: React.FC<HistoryItemCardProps> = ({ item, onDelete
                 <div className="flex-1 min-w-0 cursor-pointer hover:opacity-80 transition" onClick={() => setIsOpen(!isOpen)}>
                     <p className="font-bold text-amber-300 truncate pr-2">{title}</p>
                     <div className="flex items-center gap-4">
-                        <p className="text-xs text-gray-400">{date}</p>
+                        <p className="text-xs text-gray-300">{date}</p>
                         <div className="flex items-center gap-2">
-                            <span className="text-xs text-gray-400">{t('historyItemLanguage')}</span>
+                            <span className="text-xs text-gray-300">{t('historyItemLanguage')}</span>
                             <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
                                 item.language === 'pt' ? 'bg-green-800 text-green-200' :
                                 item.language === 'en' ? 'bg-blue-800 text-blue-200' :
@@ -210,7 +210,7 @@ export const HistoryItemCard: React.FC<HistoryItemCardProps> = ({ item, onDelete
                     {/* Media Section */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div className="p-2 bg-gray-900 rounded-lg">
-                            <h4 className="text-sm font-bold text-gray-300 mb-2 text-center">{t('marketingAudio')}</h4>
+                            <h4 className="text-sm font-bold text-gray-200 mb-2 text-center">{t('marketingAudio')}</h4>
                             {isAudioLoading ? <SpinnerIcon/> : audioUrl ? (
                                 <div className="flex items-center gap-2">
                                     <audio controls src={audioUrl} className="w-full"></audio>
@@ -219,7 +219,7 @@ export const HistoryItemCard: React.FC<HistoryItemCardProps> = ({ item, onDelete
                             ) : <p className="text-xs text-gray-500 text-center">N/A</p>}
                         </div>
                          <div className="p-2 bg-gray-900 rounded-lg">
-                            <h4 className="text-sm font-bold text-gray-300 mb-2 text-center">{t('generateImage')}</h4>
+                            <h4 className="text-sm font-bold text-gray-200 mb-2 text-center">{t('generateImage')}</h4>
                             {isImageLoading ? <SpinnerIcon/> : imageUrl ? (
                                 <div className="text-center">
                                     <img src={imageUrl} alt="Generated visual" className="rounded-md max-h-40 mx-auto" />
@@ -228,7 +228,7 @@ export const HistoryItemCard: React.FC<HistoryItemCardProps> = ({ item, onDelete
                             ) : <p className="text-xs text-gray-500 text-center">N/A</p>}
                         </div>
                          <div className="p-2 bg-gray-900 rounded-lg">
-                            <h4 className="text-sm font-bold text-gray-300 mb-2 text-center">{t('generateVideo')}</h4>
+                            <h4 className="text-sm font-bold text-gray-200 mb-2 text-center">{t('generateVideo')}</h4>
                             {isVideoLoading ? <SpinnerIcon/> : videoUrl ? (
                                 <div className="text-center">
                                     <video src={videoUrl} controls className="rounded-md max-h-40 mx-auto" />
@@ -241,32 +241,32 @@ export const HistoryItemCard: React.FC<HistoryItemCardProps> = ({ item, onDelete
                     <div className="space-y-3 text-sm pt-4 border-t border-gray-700">
                         <div>
                             <div className="flex justify-between items-center mb-1">
-                                <h4 className="font-bold text-gray-300">{t('marketingScript')}</h4>
+                                <h4 className="font-bold text-gray-200">{t('marketingScript')}</h4>
                                 <CopyButton textToCopy={item.prayer} />
                             </div>
-                            <p className="p-2 bg-gray-700 rounded mt-1 text-gray-300 whitespace-pre-wrap text-sm leading-relaxed max-h-40 overflow-y-auto">{item.prayer}</p>
+                            <p className="p-2 bg-gray-700 rounded mt-1 text-gray-100 whitespace-pre-wrap text-sm leading-relaxed max-h-40 overflow-y-auto">{item.prayer}</p>
                         </div>
 
-                         <h4 className="font-bold text-gray-300 pt-2">{t('marketingPostCopy')}</h4>
+                         <h4 className="font-bold text-gray-200 pt-2">{t('marketingPostCopy')}</h4>
                          {post && <div>
-                            <label className="text-xs font-semibold text-gray-400 flex justify-between items-center">{t('marketingTitleLabel')} <CopyButton textToCopy={post.title} /></label>
-                            <p className="p-2 bg-gray-700 rounded mt-1 text-gray-300">{post.title}</p>
+                            <label className="text-xs font-semibold text-gray-300 flex justify-between items-center">{t('marketingTitleLabel')} <CopyButton textToCopy={post.title} /></label>
+                            <p className="p-2 bg-gray-700 rounded mt-1 text-gray-100">{post.title}</p>
                         </div>}
                          {post && <div>
-                            <label className="text-xs font-semibold text-gray-400 flex justify-between items-center">{t('marketingDescriptionLabel')} <CopyButton textToCopy={post.description} /></label>
-                            <p className="p-2 bg-gray-700 rounded mt-1 text-gray-300 whitespace-pre-wrap">{post.description}</p>
+                            <label className="text-xs font-semibold text-gray-300 flex justify-between items-center">{t('marketingDescriptionLabel')} <CopyButton textToCopy={post.description} /></label>
+                            <p className="p-2 bg-gray-700 rounded mt-1 text-gray-100 whitespace-pre-wrap">{post.description}</p>
                         </div>}
                         {post && <div>
-                             <label className="text-xs font-semibold text-gray-400 flex justify-between items-center">{t('marketingHashtagsLabel')} <CopyButton textToCopy={post.hashtags.map(h => h.startsWith('#') ? h : `#${h}`)} /></label>
+                             <label className="text-xs font-semibold text-gray-300 flex justify-between items-center">{t('marketingHashtagsLabel')} <CopyButton textToCopy={post.hashtags.map(h => h.startsWith('#') ? h : `#${h}`)} /></label>
                             <p className="p-2 bg-gray-700 rounded mt-1 text-sky-300 text-xs flex flex-wrap gap-x-2 gap-y-1">{post.hashtags.map(h => h.startsWith('#') ? h : `#${h}`).join(' ')}</p>
                         </div>}
                         
                         {item.longPost && <div>
-                             <label className="text-xs font-semibold text-gray-400 flex justify-between items-center">{t('marketingTimestampsLabel')} <CopyButton textToCopy={item.longPost.timestamps} /></label>
-                            <p className="p-2 bg-gray-700 rounded mt-1 text-gray-300 whitespace-pre-wrap">{item.longPost.timestamps}</p>
+                             <label className="text-xs font-semibold text-gray-300 flex justify-between items-center">{t('marketingTimestampsLabel')} <CopyButton textToCopy={item.longPost.timestamps} /></label>
+                            <p className="p-2 bg-gray-700 rounded mt-1 text-gray-100 whitespace-pre-wrap">{item.longPost.timestamps}</p>
                         </div>}
                         {item.longPost && <div>
-                             <label className="text-xs font-semibold text-gray-400 flex justify-between items-center">{t('marketingTagsLabel')} <CopyButton textToCopy={item.longPost.tags} /></label>
+                             <label className="text-xs font-semibold text-gray-300 flex justify-between items-center">{t('marketingTagsLabel')} <CopyButton textToCopy={item.longPost.tags} /></label>
                             <p className="p-2 bg-gray-700 rounded mt-1 text-sky-300 text-xs flex flex-wrap gap-x-2 gap-y-1">{item.longPost.tags.join(', ')}</p>
                         </div>}
                     </div>

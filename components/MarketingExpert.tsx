@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { 
     generateGuidedPrayer, 
@@ -402,18 +403,18 @@ export const MarketingExpert: React.FC<MarketingExpertProps> = ({ history, setHi
         <div className="bg-gray-800 p-6 rounded-xl shadow-lg animate-fade-in space-y-6">
             <div>
                 <h2 className="text-2xl font-bold text-amber-400 mb-2">{t('marketingTitle')}</h2>
-                <p className="text-gray-400">{t('marketingDescription')}</p>
+                <p className="text-gray-300">{t('marketingDescription')}</p>
             </div>
             
             <div className="space-y-4">
                 <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">{t('marketingSelectType')}</label>
+                    <label className="block text-sm font-medium text-gray-200 mb-2">{t('marketingSelectType')}</label>
                     <div className="flex gap-2 p-1 bg-gray-700 rounded-lg">
-                        <button onClick={() => setContentType('long')} className={`flex-1 py-2 px-4 rounded-md text-sm transition flex items-center justify-center gap-2 ${contentType === 'long' ? 'bg-amber-500 text-gray-900' : 'hover:bg-gray-600'}`}>
+                        <button onClick={() => setContentType('long')} className={`flex-1 py-2 px-4 rounded-md text-sm transition flex items-center justify-center gap-2 ${contentType === 'long' ? 'bg-amber-500 text-gray-900' : 'hover:bg-gray-600 text-gray-200'}`}>
                            {isLongKitBusy && <SpinnerIcon className="animate-spin h-4 w-4" />}
                            {t('marketingLongVideo')}
                         </button>
-                        <button onClick={() => setContentType('short')} className={`flex-1 py-2 px-4 rounded-md text-sm transition flex items-center justify-center gap-2 ${contentType === 'short' ? 'bg-amber-500 text-gray-900' : 'hover:bg-gray-600'}`}>
+                        <button onClick={() => setContentType('short')} className={`flex-1 py-2 px-4 rounded-md text-sm transition flex items-center justify-center gap-2 ${contentType === 'short' ? 'bg-amber-500 text-gray-900' : 'hover:bg-gray-600 text-gray-200'}`}>
                            {isShortKitBusy && <SpinnerIcon className="animate-spin h-4 w-4" />}
                            {t('marketingShortVideo')}
                         </button>
@@ -421,13 +422,13 @@ export const MarketingExpert: React.FC<MarketingExpertProps> = ({ history, setHi
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">{t('marketingDefineTheme')}</label>
+                    <label className="block text-sm font-medium text-gray-200 mb-2">{t('marketingDefineTheme')}</label>
                     <input
                         type="text"
                         value={currentKit.prompt}
                         onChange={(e) => setCurrentKit(prev => ({...prev, prompt: e.target.value}))}
                         placeholder={t('prayerPlaceholder')}
-                        className="w-full bg-gray-700 text-white placeholder-gray-500 p-3 rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-amber-500 transition"
+                        className="w-full bg-gray-700 text-white placeholder-gray-400 p-3 rounded-lg border border-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500 transition"
                         disabled={currentStatus.isTextLoading}
                     />
                 </div>
@@ -435,7 +436,7 @@ export const MarketingExpert: React.FC<MarketingExpertProps> = ({ history, setHi
                 {contentType === 'long' && (
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-2">{t('marketingDefineSubthemes')}</label>
+                            <label className="block text-sm font-medium text-gray-200 mb-2">{t('marketingDefineSubthemes')}</label>
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                                 {[0, 1, 2].map(i => (
                                     <input
@@ -444,18 +445,18 @@ export const MarketingExpert: React.FC<MarketingExpertProps> = ({ history, setHi
                                         value={currentKit.subthemes[i]}
                                         onChange={(e) => handleSubthemeChange(i, e.target.value)}
                                         placeholder={t('marketingSubthemePlaceholder').replace('{number}', String(i + 1))}
-                                        className="w-full bg-gray-700 text-white placeholder-gray-500 p-2 rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-amber-500 transition text-sm"
+                                        className="w-full bg-gray-700 text-white placeholder-gray-400 p-2 rounded-lg border border-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500 transition text-sm"
                                         disabled={currentStatus.isTextLoading}
                                     />
                                 ))}
                             </div>
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-2">{t('prayerDurationLabel')}</label>
+                            <label className="block text-sm font-medium text-gray-200 mb-2">{t('prayerDurationLabel')}</label>
                             <select
                                 value={longVideoDuration}
                                 onChange={(e) => setLongVideoDuration(Number(e.target.value))}
-                                className="w-full bg-gray-700 text-white p-3 rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-amber-500 transition"
+                                className="w-full bg-gray-700 text-white p-3 rounded-lg border border-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500 transition"
                                 disabled={currentStatus.isTextLoading}
                                 aria-label={t('prayerDurationLabel')}
                             >
@@ -499,52 +500,52 @@ export const MarketingExpert: React.FC<MarketingExpertProps> = ({ history, setHi
                             <>
                                 <div>
                                     <div className="flex justify-between items-center mb-1">
-                                        <h4 className="font-bold text-gray-300">{t('marketingScript')}</h4>
+                                        <h4 className="font-bold text-gray-200">{t('marketingScript')}</h4>
                                         {currentKit.prayer && <CopyButton textToCopy={currentKit.prayer} />}
                                     </div>
-                                    <p className="p-2 bg-gray-700 rounded mt-1 text-gray-300 whitespace-pre-wrap text-sm leading-relaxed max-h-40 overflow-y-auto">{currentKit.prayer}</p>
+                                    <p className="p-2 bg-gray-700 rounded mt-1 text-gray-100 whitespace-pre-wrap text-sm leading-relaxed max-h-40 overflow-y-auto">{currentKit.prayer}</p>
                                 </div>
                                 <div className="space-y-3 text-sm pt-4 border-t border-gray-700">
-                                    <h4 className="font-bold text-gray-300">{t('marketingPostCopy')}</h4>
+                                    <h4 className="font-bold text-gray-200">{t('marketingPostCopy')}</h4>
                                     {currentKit.longPost ? (
                                         <>
                                             <div>
-                                                <label className="text-xs font-semibold text-gray-400 flex justify-between items-center">{t('marketingTitleLabel')} <CopyButton textToCopy={currentKit.longPost.title} /></label>
-                                                <p className="p-2 bg-gray-700 rounded mt-1 text-gray-300">{currentKit.longPost.title}</p>
+                                                <label className="text-xs font-semibold text-gray-300 flex justify-between items-center">{t('marketingTitleLabel')} <CopyButton textToCopy={currentKit.longPost.title} /></label>
+                                                <p className="p-2 bg-gray-700 rounded mt-1 text-gray-100">{currentKit.longPost.title}</p>
                                             </div>
                                             <div>
-                                                <label className="text-xs font-semibold text-gray-400 flex justify-between items-center">{t('marketingDescriptionLabel')} <CopyButton textToCopy={currentKit.longPost.description} /></label>
-                                                <p className="p-2 bg-gray-700 rounded mt-1 text-gray-300 whitespace-pre-wrap">{currentKit.longPost.description}</p>
+                                                <label className="text-xs font-semibold text-gray-300 flex justify-between items-center">{t('marketingDescriptionLabel')} <CopyButton textToCopy={currentKit.longPost.description} /></label>
+                                                <p className="p-2 bg-gray-700 rounded mt-1 text-gray-100 whitespace-pre-wrap">{currentKit.longPost.description}</p>
                                             </div>
                                              <div>
-                                                 <label className="text-xs font-semibold text-gray-400 flex justify-between items-center">{t('marketingHashtagsLabel')} <CopyButton textToCopy={currentKit.longPost.hashtags} /></label>
+                                                 <label className="text-xs font-semibold text-gray-300 flex justify-between items-center">{t('marketingHashtagsLabel')} <CopyButton textToCopy={currentKit.longPost.hashtags} /></label>
                                                 <p className="p-2 bg-gray-700 rounded mt-1 text-sky-300 text-xs flex flex-wrap gap-x-2 gap-y-1">{currentKit.longPost.hashtags.join(' ')}</p>
                                             </div>
                                             <div>
-                                                 <label className="text-xs font-semibold text-gray-400 flex justify-between items-center">{t('marketingTimestampsLabel')} <CopyButton textToCopy={currentKit.longPost.timestamps} /></label>
-                                                <p className="p-2 bg-gray-700 rounded mt-1 text-gray-300 whitespace-pre-wrap">{currentKit.longPost.timestamps}</p>
+                                                 <label className="text-xs font-semibold text-gray-300 flex justify-between items-center">{t('marketingTimestampsLabel')} <CopyButton textToCopy={currentKit.longPost.timestamps} /></label>
+                                                <p className="p-2 bg-gray-700 rounded mt-1 text-gray-100 whitespace-pre-wrap">{currentKit.longPost.timestamps}</p>
                                             </div>
                                             <div>
-                                                 <label className="text-xs font-semibold text-gray-400 flex justify-between items-center">{t('marketingTagsLabel')} <CopyButton textToCopy={currentKit.longPost.tags} /></label>
+                                                 <label className="text-xs font-semibold text-gray-300 flex justify-between items-center">{t('marketingTagsLabel')} <CopyButton textToCopy={currentKit.longPost.tags} /></label>
                                                 <p className="p-2 bg-gray-700 rounded mt-1 text-sky-300 text-xs flex flex-wrap gap-x-2 gap-y-1">{currentKit.longPost.tags.join(', ')}</p>
                                             </div>
                                         </>
                                     ) : currentKit.socialPost ? (
                                          <>
                                             <div>
-                                                <label className="text-xs font-semibold text-gray-400 flex justify-between items-center">{t('marketingTitleLabel')} <CopyButton textToCopy={currentKit.socialPost.title} /></label>
-                                                <p className="p-2 bg-gray-700 rounded mt-1 text-gray-300">{currentKit.socialPost.title}</p>
+                                                <label className="text-xs font-semibold text-gray-300 flex justify-between items-center">{t('marketingTitleLabel')} <CopyButton textToCopy={currentKit.socialPost.title} /></label>
+                                                <p className="p-2 bg-gray-700 rounded mt-1 text-gray-100">{currentKit.socialPost.title}</p>
                                             </div>
                                             <div>
-                                                <label className="text-xs font-semibold text-gray-400 flex justify-between items-center">{t('marketingDescriptionLabel')} <CopyButton textToCopy={currentKit.socialPost.description} /></label>
-                                                <p className="p-2 bg-gray-700 rounded mt-1 text-gray-300 whitespace-pre-wrap">{currentKit.socialPost.description}</p>
+                                                <label className="text-xs font-semibold text-gray-300 flex justify-between items-center">{t('marketingDescriptionLabel')} <CopyButton textToCopy={currentKit.socialPost.description} /></label>
+                                                <p className="p-2 bg-gray-700 rounded mt-1 text-gray-100 whitespace-pre-wrap">{currentKit.socialPost.description}</p>
                                             </div>
                                             <div>
-                                                 <label className="text-xs font-semibold text-gray-400 flex justify-between items-center">{t('marketingHashtagsLabel')} <CopyButton textToCopy={currentKit.socialPost.hashtags.map(h => `#${h}`).join(' ')} /></label>
+                                                 <label className="text-xs font-semibold text-gray-300 flex justify-between items-center">{t('marketingHashtagsLabel')} <CopyButton textToCopy={currentKit.socialPost.hashtags.map(h => `#${h}`).join(' ')} /></label>
                                                 <p className="p-2 bg-gray-700 rounded mt-1 text-sky-300 text-xs flex flex-wrap gap-2">{currentKit.socialPost.hashtags.map(h => `#${h}`).join(' ')}</p>
                                             </div>
                                         </>
-                                    ) : (currentKit.prayer && <p className="text-xs text-gray-500">{t('marketingErrorSocial')}</p>)}
+                                    ) : (currentKit.prayer && <p className="text-xs text-gray-400">{t('marketingErrorSocial')}</p>)}
                                 </div>
                             </>
                         )}
@@ -557,7 +558,7 @@ export const MarketingExpert: React.FC<MarketingExpertProps> = ({ history, setHi
                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                  {/* Audio */}
                                 <div className="p-4 bg-gray-900 rounded-lg space-y-2 flex flex-col">
-                                     <h4 className="font-bold text-gray-300">{t('marketingAudio')}</h4>
+                                     <h4 className="font-bold text-gray-200">{t('marketingAudio')}</h4>
                                      <button onClick={handleGenerateAudio} disabled={isAnyMediaGenerating} className="w-full flex items-center justify-center bg-sky-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-sky-700 disabled:bg-gray-600">
                                          {currentStatus.isAudioLoading ? <><SpinnerIcon /> {t('generatingAudio')}</> : t('generateAudio')}
                                      </button>
@@ -570,7 +571,7 @@ export const MarketingExpert: React.FC<MarketingExpertProps> = ({ history, setHi
                                                 ></div>
                                             </div>
                                          )}
-                                         {isAudioLoadingFromDB && <div className="text-center text-gray-400 italic text-xs">Loading saved audio... <SpinnerIcon/></div>}
+                                         {isAudioLoadingFromDB && <div className="text-center text-gray-300 italic text-xs">Loading saved audio... <SpinnerIcon/></div>}
                                          {currentKit.audioError && <p className="text-xs text-red-400">{currentKit.audioError}</p>}
                                          {audioObjUrl && !currentStatus.isAudioLoading && (
                                             <div className="flex items-center gap-2">
@@ -582,13 +583,13 @@ export const MarketingExpert: React.FC<MarketingExpertProps> = ({ history, setHi
                                 </div>
                                  {/* Image */}
                                 <div className="p-4 bg-gray-900 rounded-lg space-y-2 flex flex-col">
-                                    <h4 className="font-bold text-gray-300">{t('generateImage')}</h4>
+                                    <h4 className="font-bold text-gray-200">{t('generateImage')}</h4>
                                     <button onClick={handleGenerateImage} disabled={isAnyMediaGenerating} className="w-full flex items-center justify-center bg-sky-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-sky-700 disabled:bg-gray-600">
                                         {currentStatus.isImageLoading ? <><SpinnerIcon /> {t('generatingImage')}</> : t('generateImage')}
                                     </button>
                                     <div className="flex-grow pt-2">
-                                        <p className="text-xs text-gray-500">{t('imageInfoBilled')}</p>
-                                        {isImageLoadingFromDB && <div className="text-center text-gray-400 italic text-xs">Loading saved image... <SpinnerIcon/></div>}
+                                        <p className="text-xs text-gray-400">{t('imageInfoBilled')}</p>
+                                        {isImageLoadingFromDB && <div className="text-center text-gray-300 italic text-xs">Loading saved image... <SpinnerIcon/></div>}
                                         {currentKit.imageError && <p className="text-xs text-red-400">{currentKit.imageError}</p>}
                                         {imageObjUrl && (
                                              <div className="text-center mt-2">
@@ -600,7 +601,7 @@ export const MarketingExpert: React.FC<MarketingExpertProps> = ({ history, setHi
                                 </div>
                                  {/* Video */}
                                 <div className="p-4 bg-gray-900 rounded-lg space-y-2 flex flex-col">
-                                    <h4 className="font-bold text-gray-300">{t('generateVideo')}</h4>
+                                    <h4 className="font-bold text-gray-200">{t('generateVideo')}</h4>
                                      <button onClick={handleGenerateVideo} disabled={isAnyMediaGenerating || !apiKeySelected} className="w-full flex items-center justify-center bg-sky-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-sky-700 disabled:bg-gray-600">
                                          {currentStatus.isVideoLoading ? <><SpinnerIcon /> {t('generatingVideo')}</> : t('generateVideo')}
                                      </button>
@@ -612,8 +613,8 @@ export const MarketingExpert: React.FC<MarketingExpertProps> = ({ history, setHi
                                             </div>
                                          )}
                                          {currentKit.videoError && <p className="text-xs text-red-400">{currentKit.videoError}</p>}
-                                         {currentStatus.isFetchingVideo && <div className="text-center text-gray-400 italic text-xs">Loading saved video... <SpinnerIcon/></div>}
-                                         {currentStatus.isVideoLoading && <div className="text-center text-gray-400 italic text-xs">Video generation can take a few minutes... <SpinnerIcon/></div>}
+                                         {currentStatus.isFetchingVideo && <div className="text-center text-gray-300 italic text-xs">Loading saved video... <SpinnerIcon/></div>}
+                                         {currentStatus.isVideoLoading && <div className="text-center text-gray-300 italic text-xs">Video generation can take a few minutes... <SpinnerIcon/></div>}
                                          {videoObjUrl && !currentStatus.isFetchingVideo && !currentStatus.isVideoLoading && (
                                              <div className="text-center mt-2">
                                                 <video src={videoObjUrl} controls className="rounded-md max-h-40 mx-auto" />

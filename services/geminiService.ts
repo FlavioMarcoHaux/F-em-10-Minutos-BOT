@@ -39,7 +39,7 @@ const fileToGenerativePart = async (file: File) => {
 };
 
 export const getTrendingTopic = async (language: string, contentType: 'long' | 'short'): Promise<{ theme: string; subthemes: string[] }> => {
-    const model = 'gemini-2.5-pro';
+    const model = 'gemini-3-pro-preview';
 
     const prompts: { [key: string]: string } = {
         pt: `
@@ -106,7 +106,7 @@ export const getTrendingTopic = async (language: string, contentType: 'long' | '
 };
 
 export const generateGuidedPrayer = async (prompt: string, language: string, durationInMinutes: number = 10): Promise<string> => {
-  const model = "gemini-2.5-pro";
+  const model = "gemini-3-pro-preview";
   const finalPrompt = prompt || getRandomTheme(language);
 
   let minTokens, maxTokens;
@@ -156,7 +156,7 @@ export const generateGuidedPrayer = async (prompt: string, language: string, dur
 };
 
 export const generateShortPrayer = async (prompt: string, language: string): Promise<string> => {
-    const model = "gemini-2.5-pro";
+    const model = "gemini-3-pro-preview";
     const finalPrompt = prompt || getRandomTheme(language);
 
     const prayerBasePrompt = `
@@ -181,7 +181,7 @@ export const generateShortPrayer = async (prompt: string, language: string): Pro
 };
 
 export const analyzeImage = async (imageFile: File, prompt: string, language: string): Promise<string> => {
-    const model = 'gemini-2.5-pro';
+    const model = 'gemini-3-pro-preview';
     
     let analysisPrompt = prompt.trim();
     if (!analysisPrompt) {
@@ -208,44 +208,117 @@ export const analyzeImage = async (imageFile: File, prompt: string, language: st
     }
 };
 
-export const createMediaPromptFromPrayer = async (prayerText: string): Promise<string> => {
-  const model = "gemini-2.5-pro";
-  const mediaPromptInstruction = `
-    Based on the following prayer, create a concise, visually descriptive prompt for an AI image generator. The prompt should capture the core emotion and symbolism of the prayer in a single sentence. Focus on creating a powerful, artistic, and metaphorical image. Do not include any text in the prompt.
+// Fix: Add the missing `createMediaPromptFromPrayer` function to generate a visual prompt from prayer text.
+export const createMediaPromptFromPrayer = async (prayer: string, language: string): Promise<string> => {
+    const model = "gemini-3-pro-preview";
+    const prompts: { [key: string]: string } = {
+        pt: `
+            Baseado na seguinte oração, crie um único prompt de imagem, em uma única linha de texto, para uma IA de geração de imagem.
+            O prompt deve ser visualmente descritivo, evocativo e capturar a essência emocional e simbólica da oração.
+            A resposta DEVE ser apenas o prompt, sem explicações. O prompt final DEVE estar em português.
 
-    Prayer:
-    """
-    ${prayerText}
-    """
+            Oração: "${prayer}"
+        `,
+        en: `
+            Based on the following prayer, create a single, one-line image prompt for an image generation AI.
+            The prompt should be visually descriptive, evocative, and capture the emotional and symbolic essence of the prayer.
+            The response MUST be only the prompt, with no explanation. The final prompt MUST be in English.
 
-    Prompt:
-  `;
-  try {
-    const response = await ai.models.generateContent({
-      model,
-      contents: [{ parts: [{ text: mediaPromptInstruction }] }],
-    });
-    return response.text.trim().replace(/"/g, ''); // Clean up the output
-  } catch (error) {
-    console.error("Error creating media prompt:", error);
-    throw new Error("Failed to create a visual prompt for the media.");
-  }
+            Prayer: "${prayer}"
+        `,
+        es: `
+            Basado en la siguiente oración, crea un único prompt de imagen, en una sola línea de texto, para una IA de generación de imágenes.
+            El prompt debe ser visualmente descritivo, evocador y capturar la esencia emocional y simbólica de la oración.
+            La respuesta DEBE ser solo el prompt, sin explicaciones. El prompt final DEBE estar en español.
+
+            Oración: "${prayer}"
+        `
+    };
+
+    const instruction = prompts[language] || prompts['en'];
+
+    try {
+        const response = await ai.models.generateContent({
+          model,
+          contents: [{ parts: [{ text: instruction }] }],
+        });
+        return response.text.trim();
+    } catch (error) {
+        console.error("Error creating media prompt from prayer:", error);
+        throw new Error("Failed to create media prompt from prayer.");
+    }
 };
 
 export const createThumbnailPromptFromPost = async (title: string, description: string, prayer: string, language: string): Promise<string> => {
-    const model = "gemini-2.5-pro";
-    const instruction = `
-      You are an expert AI art director. Based on the following social media post content (title, description, and the full prayer script), create a single, powerful, and concise prompt for an AI image generator to create a compelling thumbnail.
-      The prompt should be visually descriptive, capture the core emotion, and be highly symbolic.
-      It MUST include the post's title as text to be rendered prominently in the image.
-      The entire prompt must be in this language: ${language}.
+    const model = "gemini-3-pro-preview";
+    const prompts: { [key: string]: string } = {
+        pt: `
+            Você é um especialista em comunicação visual e "Clickbait Ético" para YouTube. Sua tarefa é criar um prompt de imagem para o modelo Imagen 4 Ultra que gere uma thumbnail EXTREMAMENTE impactante (proporção 16:9).
 
-      **Title:** ${title}
-      **Description:** ${description}
-      **Full Script:** ${prayer}
+            **ESTRATÉGIA VISUAL (ALTO CTR):**
+            1.  **TEXTO NA IMAGEM:** A imagem DEVE ter uma composição que sugira ou inclua os seguintes textos (em português):
+                -   Topo (Letras Garrafais/Amarelo Ouro): "PARA MUDAR SUA VIDA AGORA!"
+                -   Base (Letras Brancas Grandes): "ORAÇÃO MAIS PODEROSA DE [TEMA]" (Extraia o tema do conteúdo).
+            2.  **Contraste Extremo:** Fundo escuro (preto, azul meia-noite, roxo profundo) vs. Texto/Luz Amarelo e Branco Brilhante.
+            3.  **Emoção:** Use simbolismo de luz divina, mãos em oração, ou silhueta em montanha. A imagem deve "saltar" na tela.
 
-      Analyze the content and generate one single-sentence prompt. Example format: 'An epic cinematic photo of [main subject], with the title "${title}" in bold, dramatic font, [style details like 'glowing light', 'ethereal atmosphere'].'
-    `;
+            **Regras de Saída:**
+            -   O prompt final DEVE estar em português.
+            -   A resposta DEVE ser apenas o prompt de imagem, uma única linha.
+            -   Descreva detalhadamente a posição do texto e as cores para a IA de imagem.
+
+            **Conteúdo de Entrada:**
+            -   Título: ${title}
+            -   Roteiro: ${prayer}
+
+            Gere o prompt da thumbnail agora.
+        `,
+        en: `
+            You are a visual communication and "Ethical Clickbait" expert for YouTube. Your task is to create an image prompt for the Imagen 4 Ultra model to generate an EXTREMELY impactful thumbnail (16:9 ratio).
+
+            **VISUAL STRATEGY (HIGH CTR):**
+            1.  **TEXT ON IMAGE:** The image MUST have a composition that suggests or includes the following text (in English):
+                -   Top (Bold/Golden Yellow): "TO CHANGE YOUR LIFE NOW!"
+                -   Bottom (Large White Letters): "MOST POWERFUL PRAYER FOR [TOPIC]" (Extract the topic).
+            2.  **Extreme Contrast:** Dark background (black, midnight blue, deep purple) vs. Bright Yellow and White Text/Light.
+            3.  **Emotion:** Use symbolism of divine light, praying hands, or silhouette on a mountain. The image must "pop" off the screen.
+
+            **Output Rules:**
+            -   The final prompt MUST be in English.
+            -   The response MUST be only the image prompt, a single line.
+            -   Describe the text positioning and colors in detail for the image AI.
+
+            **Input Content:**
+            -   Title: ${title}
+            -   Script: ${prayer}
+
+            Generate the thumbnail prompt now.
+        `,
+        es: `
+            Eres un experto en comunicación visual y "Clickbait Ético" para YouTube. Tu tarea es crear un prompt de imagen para el modelo Imagen 4 Ultra que genere una miniatura EXTREMADAMENTE impactante (proporción 16:9).
+
+            **ESTRATEGIA VISUAL (ALTO CTR):**
+            1.  **TEXTO EN LA IMAGEN:** La imagen DEBE tener una composición que sugiera o incluya los siguientes textos (en español):
+                -   Arriba (Letras Grandes/Amarillo Dorado): "¡PARA CAMBIAR TU VIDA AHORA!"
+                -   Abajo (Letras Blancas Grandes): "ORACIÓN MÁS PODEROSA DE [TEMA]" (Extrae el tema).
+            2.  **Contraste Extremo:** Fondo oscuro (negro, azul medianoche, púrpura profundo) vs. Texto/Luz Amarillo y Blanco Brillante.
+            3.  **Emoción:** Usa simbolismo de luz divina, manos orando o silueta en montaña. La imagen debe "saltar" en la pantalla.
+
+            **Reglas de Salida:**
+            -   El prompt final DEBE estar en español.
+            -   La respuesta DEBE ser solo el prompt de imagen, una sola línea.
+            -   Describe detalladamente la posición del texto y los colores para la IA de imagen.
+
+            **Contenido de Entrada:**
+            -   Título: ${title}
+            -   Guion: ${prayer}
+
+            Genera el prompt de la miniatura ahora.
+        `
+    };
+
+    const instruction = prompts[language] || prompts['en'];
+
     try {
         const response = await ai.models.generateContent({
           model,
@@ -317,7 +390,7 @@ export const generateVideo = async (prompt: string, aspectRatio: AspectRatio): P
 };
 
 export const generateSocialMediaPost = async (prayer: string, language: string): Promise<SocialMediaPost> => {
-    const model = 'gemini-2.5-pro';
+    const model = 'gemini-3-pro-preview';
     const prompt = `
       Analyze the following prayer written in ${language}.
       Your task is to create a social media post for platforms like Instagram Reels or TikTok.
@@ -349,21 +422,122 @@ export const generateSocialMediaPost = async (prayer: string, language: string):
 };
 
 export const generateYouTubeLongPost = async (theme: string, subthemes: string[], language: string, durationInMinutes: number = 10): Promise<YouTubeLongPost> => {
-    const model = 'gemini-2.5-pro';
-    const prompt = `
-      You are an expert in YouTube SEO and content strategy for a Christian audience.
-      The main theme of the video is "${theme}". The video is structured with three sub-themes: 1) ${subthemes[0]}, 2) ${subthemes[1]}, 3) ${subthemes[2]}.
-      The video will be approximately ${durationInMinutes} minutes long.
-      Your task is to generate all the necessary metadata for the YouTube upload.
-      The response must be in this language: ${language}.
-      The response must be a single, valid JSON object, with no markdown formatting or extra text.
-      The JSON object must have five keys:
-      1. "title": A compelling, SEO-optimized title for the YouTube video.
-      2. "description": A detailed, engaging description. It should start with a hook, explain what the video is about, include the three hashtags (as required by YouTube), and end with a call to action to subscribe to "Fé em 10 Minutos" and "Faith in 10 Minutes".
-      3. "hashtags": An array of exactly 3 relevant hashtags for the description field. Do not include the '#' symbol.
-      4. "timestamps": A multiline string of video chapters. List "Intro", followed by the three subthemes, and end with "Outro". Each chapter title must be on a new line. DO NOT include any timestamps (e.g., "00:00 -").
-      5. "tags": An array of 10-15 relevant keywords and phrases for the YouTube tags field.
-    `;
+    const model = 'gemini-3-pro-preview';
+
+    const prompts: { [key: string]: string } = {
+        pt: `
+            Você é o especialista em SEO e mídias sociais do canal 'Fé em 10 minutos de Oração' (YouTube: https://www.youtube.com/@fe10minutos).
+            Sua tarefa é gerar um Título, uma Descrição, Capítulos e Tags otimizados para um novo vídeo longo de ${durationInMinutes} minutos.
+            O TEMA DO VÍDEO é: "${theme}".
+            A LISTA DE 3 SUBTEMAS é: 1. ${subthemes[0]}, 2. ${subthemes[1]}, 3. ${subthemes[2]}.
+
+            **REGRAS (TÍTULO - FORMATO VIRAL OBRIGATÓRIO):**
+            - Deve seguir ESTRITAMENTE este modelo: "A ORAÇÃO MAIS PODEROSA DE [TEMA] PARA MUDAR SUA VIDA | Fé em 10 minutos de Oração"
+            - Substitua [TEMA] pelo tema do vídeo.
+
+            **REGRAS (DESCRIÇÃO - FORMATO DE CONEXÃO):**
+            - Repita o Título exato na primeira linha.
+            - Pule uma linha.
+            - O parágrafo seguinte DEVE seguir este template exato (substitua o que está entre colchetes):
+              "Nesta oração guiada de hoje, entregue-se a um momento de profunda intimidade com Deus através de uma mensagem de fé tocante sobre [TEMA]. Façamos juntos esta oração poderosa para reconhecer as bênçãos divinas, renovar as esperanças e trazer paz ao coração."
+            - Inclua os links de CTA:
+              🕊️ ASSISTA TAMBÉM:
+              ► Oração da Manhã (Playlist): https://www.youtube.com/playlist?list=PLmeEfeSNeLbKppEyZUaBoXw4BVxZTq-I2
+              ► Oração da Noite (Playlist): https://www.youtube.com/playlist?list=PLmeEfeSNeLbLFUayT8Sfb9IQzr0ddkrHC
+              🔗 INSCREVA-SE NO CANAL: https://www.youtube.com/@fe10minutos
+
+            **REGRAS (CAPÍTULOS):**
+            - Crie 5-6 capítulos.
+            - O primeiro capítulo deve ser "Introdução (Mensagem de Fé)".
+            - Use os 3 SUBTEMAS para criar os capítulos do meio.
+            - O último capítulo deve ser "Palavra Final e Bênção".
+            - O resultado deve ser uma string multilinhas, apenas com os títulos dos capítulos, um por linha. NÃO inclua marcações de tempo (ex: "00:00 -").
+
+            **REGRAS (TAGS/HASHTAGS):**
+            - Na Descrição (3 hashtags): Crie 3 hashtags, incluindo #Oração, #Fé, e uma para o TEMA sem espaços (ex: #BencaoFinanceira).
+            - No campo "Tags": inclua "Fé em 10 minutos de Oração", "Oração de 10 minutos", "Oração Poderosa", o TEMA, "Oração Diária", "Oração Guiada", "Intimidade com Deus", "Oração da Noite", "Oração para Dormir", "Palavra de Deus", "Mensagem de Fé", "Devocional Diário".
+
+            **FORMATO DA RESPOSTA:**
+            Sua resposta DEVE ser um único objeto JSON válido, sem nenhum texto ou formatação markdown antes ou depois.
+            O objeto JSON deve ter cinco chaves: "title" (string), "description" (string), "hashtags" (array de 3 strings, sem '#'), "timestamps" (string multilinhas), e "tags" (array de strings).
+        `,
+        en: `
+            You are the SEO and social media expert for the 'Faith in 10 Minutes' channel (YouTube: https://www.youtube.com/@Faithin10Minutes).
+            Your task is to generate an optimized Title, Description, Timestamps, and Tags for a new ${durationInMinutes}-minute long-form video.
+            The VIDEO TOPIC is: "${theme}".
+            The LIST OF 3 SUBTOPICS is: 1. ${subthemes[0]}, 2. ${subthemes[1]}, 3. ${subthemes[2]}.
+
+            **RULES (TITLE - MANDATORY VIRAL FORMAT):**
+            - Must strictly follow this model: "THE MOST POWERFUL PRAYER FOR [TOPIC] TO CHANGE YOUR LIFE | Faith in 10 Minutes"
+            - Replace [TOPIC] with the video topic.
+
+            **RULES (DESCRIPTION - CONNECTION FORMAT):**
+            - Start by repeating the exact Title.
+            - Skip a line.
+            - The next paragraph MUST follow this exact template (replace brackets):
+              "In today's guided prayer, surrender to a moment of deep intimacy with God through a touching message of faith about [TOPIC]. Let us pray this powerful prayer together to recognize divine blessings, renew hope, and bring peace to your heart."
+            - Include CTA links:
+              🕊️ WATCH NEXT:
+              ► Architecture of the Soul (Playlist) https://www.youtube.com/playlist?list=PLTQIQ5QpCYPo11ap1JUSiItZtoiV_4lEH
+              ► Morning Prayers (Playlist): https://www.youtube.com/playlist?list=PLTQIQ5QpCYPqym_6TF19PB71SpLpAGuZr
+              ► Evening Prayers (Playlist): https://www.youtube.com/playlist?list=PLTQIQ5QpCYPq91fvXaDSideb8wrnG-YtR
+              🔗 SUBSCRIBE TO THE CHANNEL: https://www.youtube.com/@Faithin10Minutes
+
+            **RULES (TIMESTAMPS):**
+            - Create 5-6 chapters.
+            - The first chapter must be "Introduction (Message of Faith)".
+            - Use the 3 SUBTOPICS to create the middle chapters.
+            - The last chapter must be "Final Word and Blessing".
+            - The result should be a multiline string, with only the chapter titles, one per line. DO NOT include timestamps (e.g., "00:00 -").
+
+            **RULES (TAGS/HASHTAGS):**
+            - In Description (3 hashtags): Create 3 hashtags, including #Prayer, #Faith, and one for the TOPIC with no spaces (e.g., #FinancialBlessing).
+            - In "Tags" field: include "Faith in 10 Minutes", "10 Minute Prayer", "Powerful Prayer", the TOPIC, "Daily Prayer", "Guided Prayer", "Relationship with God", "Morning Prayer", "Evening Prayer", "Prayer for Sleep", "Prayer for Anxiety", "Prayer for Healing", "Word of God", "Message of Faith", "Daily Devotional".
+
+            **RESPONSE FORMAT:**
+            Your response MUST be a single, valid JSON object, with no text or markdown formatting before or after it.
+            The JSON object must have five keys: "title" (string), "description" (string), "hashtags" (array of 3 strings, without '#'), "timestamps" (multiline string), and "tags" (array of strings).
+        `,
+         es: `
+            Eres el experto en SEO y redes sociales para un canal de YouTube enfocado en la fe (similar a 'Faith in 10 Minutes').
+            Tu tarea es generar un Título, Descripción, Capítulos y Etiquetas optimizados para un nuevo video largo de ${durationInMinutes} minutos.
+            El TEMA DEL VIDEO es: "${theme}".
+            La LISTA DE 3 SUBTEMAS es: 1. ${subthemes[0]}, 2. ${subthemes[1]}, 3. ${subthemes[2]}.
+
+            **REGLAS (TÍTULO - FORMATO VIRAL OBLIGATORIO):**
+            - Debe seguir ESTRICTAMENTE este modelo: "LA ORACIÓN MÁS PODEROSA DE [TEMA] PARA CAMBIAR TU VIDA | Fe en 10 Minutos"
+            - Reemplaza [TEMA] con el tema del video.
+
+            **REGLAS (DESCRIPCIÓN - FORMATO DE CONEXIÓN):**
+            - Comienza repitiendo el Título exacto.
+            - Salta una línea.
+            - El siguiente párrafo DEBE seguir esta plantilla exacta (reemplaza los corchetes):
+              "En esta oración guiada de hoy, entrégate a un momento de profunda intimidad con Dios a través de un conmovedor mensaje de fe sobre [TEMA]. Hagamos juntos esta poderosa oración para reconocer las bendiciones divinas, renovar la esperanza y traer paz al corazón."
+            - Incluye enlaces CTA (puedes usar los de la versión en inglés como plantilla):
+              🕊️ MIRA A CONTINUACIÓN:
+              ► Oraciones Matutinas (Playlist): https://www.youtube.com/playlist?list=PLTQIQ5QpCYPqym_6TF19PB71SpLpAGuZr
+              ► Oraciones Nocturnas (Playlist): https://www.youtube.com/playlist?list=PLTQIQ5QpCYPq91fvXaDSideb8wrnG-YtR
+              🔗 SUSCRÍBETE AL CANAL: https://www.youtube.com/@Faithin10Minutes
+
+            **REGLAS (CAPÍTULOS):**
+            - Crea 5-6 capítulos.
+            - El primer capítulo debe ser "Introducción (Mensaje de Fe)".
+            - Usa los 3 SUBTEMAS para crear los capítulos intermedios.
+            - El último capítulo debe ser "Palabra Final y Bendición".
+            - El resultado debe ser una cadena de texto multilínea, solo con los títulos de los capítulos, uno por línea. NO incluyas marcas de tiempo (ej: "00:00 -").
+
+            **REGLAS (ETIQUETAS/HASHTAGS):**
+            - En la Descripción (3 hashtags): Crea 3 hashtags, incluyendo #Oracion, #Fe, y uno para el TEMA sin espacios (ej: #BendicionFinanciera).
+            - En el campo "Etiquetas": incluye "Fe en 10 Minutos", "Oración de 10 minutos", "Oración Poderosa", el TEMA, "Oración Diária", "Oración Guiada", "Relación con Dios", "Oración de la Mañana", "Oración de la Noche", "Oración para Dormir", "Palabra de Dios", "Mensaje de Fe", "Devocional Diario".
+
+            **FORMATO DE RESPUESTA:**
+            Tu respuesta DEBE ser un único objeto JSON válido, sin texto ni formato markdown antes o después.
+            El objeto JSON debe tener cinco claves: "title" (string), "description" (string), "hashtags" (array de 3 strings, sin '#'), "timestamps" (string multilínea), y "tags" (array de strings).
+        `
+    };
+    
+    const prompt = prompts[language] || prompts['en'];
+
     try {
         const response = await ai.models.generateContent({
             model,

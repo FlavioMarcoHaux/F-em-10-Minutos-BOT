@@ -1,7 +1,4 @@
 
-
-
-
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import {
     getTrendingTopic,
@@ -10,7 +7,6 @@ import {
     generateSpeech,
     generateImageFromPrayer,
     createThumbnailPromptFromPost,
-    createMediaPromptFromPrayer,
     generateSocialMediaPost,
     generateYouTubeLongPost,
 } from '../services/geminiService';
@@ -66,7 +62,6 @@ export const BotAgent: React.FC<BotAgentProps> = ({ history, setHistory }) => {
         jobType: 'long' | 'short',
         theme: string,
         subthemes: string[],
-        sharedImageBlob?: Blob,
     ) => {
         // 1. Generate Text Assets
         let prayer: string;
@@ -118,10 +113,7 @@ export const BotAgent: React.FC<BotAgentProps> = ({ history, setHistory }) => {
         });
     
         const imageBlobPromise = (async (): Promise<Blob> => {
-            if (sharedImageBlob) {
-                return sharedImageBlob;
-            }
-            // For short videos, or long videos without a shared image, generate a unique thumbnail with text.
+            // Always generate a unique thumbnail with text.
             const visualPrompt = await createThumbnailPromptFromPost(post.title, post.description, prayer, jobLang);
             const aspectRatio: AspectRatio = jobType === 'short' ? '9:16' : '16:9';
             const imageB64 = await generateImageFromPrayer(visualPrompt, aspectRatio, 'imagen-4.0-generate-001');
@@ -168,19 +160,9 @@ export const BotAgent: React.FC<BotAgentProps> = ({ history, setHistory }) => {
             // 1. Research Topic using primary language 'pt' to get a shared theme
             const { theme, subthemes } = await getTrendingTopic('pt', 'long');
     
-            // 2. Generate ONE master visual asset to be shared (without text)
-            const ptPrayerForVisual = await generateGuidedPrayer(theme, 'pt', 10);
-            const visualPrompt = await createMediaPromptFromPrayer(ptPrayerForVisual);
-            const imageB64 = await generateImageFromPrayer(visualPrompt, '16:9', 'imagen-4.0-generate-001');
-            if (!imageB64) throw new Error("Failed to generate shared image asset.");
-    
-            const imageResponse = await fetch(`data:image/png;base64,${imageB64}`);
-            const imageBlob = await imageResponse.blob();
-            if (!imageBlob) throw new Error("Failed to create shared image blob.");
-    
-            // 3. Run generation for all languages, reusing the image
+            // 2. Run generation for all languages, generating a unique, localized kit for each.
             for (const lang of ['pt', 'en', 'es'] as const) {
-                await generateAndSaveKit(lang, 'long', theme, subthemes, imageBlob);
+                await generateAndSaveKit(lang, 'long', theme, subthemes);
             }
         } catch (error) {
             console.error(`Autonomous agent long video batch failed:`, error);
@@ -379,23 +361,23 @@ export const BotAgent: React.FC<BotAgentProps> = ({ history, setHistory }) => {
                 <BotIcon className="h-6 w-6 text-teal-400 flex-shrink-0 mt-1" />
                 <div>
                     <h2 className="text-lg font-bold text-teal-300">{t(type === 'long' ? 'agentTitleLong' : 'agentTitleShort')}</h2>
-                    <p className="text-xs text-gray-400">{t(type === 'long' ? 'agentDescriptionLong' : 'agentDescriptionShort')}</p>
+                    <p className="text-xs text-gray-300">{t(type === 'long' ? 'agentDescriptionLong' : 'agentDescriptionShort')}</p>
                 </div>
             </div>
             <div className="flex-grow space-y-3 p-3 bg-gray-800 rounded-lg flex flex-col justify-between">
                 <div className="flex items-center gap-3">
-                    <label className="font-bold text-gray-300 text-sm">{t('agentStatus')}</label>
+                    <label className="font-bold text-gray-200 text-sm">{t('agentStatus')}</label>
                     <label className="flex items-center cursor-pointer">
                         <input type="checkbox" id={`agent-toggle-${type}`} className="sr-only peer" checked={isActive} onChange={() => setIsActive(!isActive)} />
                         <div className="relative w-11 h-6 bg-gray-600 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-600"></div>
-                        <span className={`ms-3 text-sm font-medium ${isActive ? 'text-teal-400' : 'text-gray-400'}`}>
+                        <span className={`ms-3 text-sm font-medium ${isActive ? 'text-teal-400' : 'text-gray-300'}`}>
                             {isActive ? t('agentStatusActive') : t('agentStatusInactive')}
                         </span>
                     </label>
                 </div>
 
                 <div className="flex items-center gap-2">
-                    <label className="text-sm font-medium text-gray-300 whitespace-nowrap">{t(type === 'long' ? 'agentCadenceLabel' : 'agentCadenceLabelShort')}:</label>
+                    <label className="text-sm font-medium text-gray-200 whitespace-nowrap">{t(type === 'long' ? 'agentCadenceLabel' : 'agentCadenceLabelShort')}:</label>
                     <select
                         value={cadence}
                         onChange={(e) => setCadence(Number(e.target.value))}
@@ -418,7 +400,7 @@ export const BotAgent: React.FC<BotAgentProps> = ({ history, setHistory }) => {
                         )}
                     </select>
                 </div>
-                 <div className="text-xs text-gray-400 italic text-center h-8 flex items-center justify-center">
+                 <div className="text-xs text-gray-300 italic text-center h-8 flex items-center justify-center">
                     {status.includes(t('agentStatusRunning').split(" ")[0]) ? <SpinnerIcon className="inline-flex w-4 h-4 mr-2" /> : null}
                     {status}
                 </div>
@@ -444,7 +426,7 @@ export const BotAgent: React.FC<BotAgentProps> = ({ history, setHistory }) => {
                     <h4 className="font-bold text-gray-200 text-sm">{t(platform === 'youtube' ? 'integrationsYouTube' : 'integrationsTikTok')}</h4>
                     <div className="flex items-center gap-1.5">
                         <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500 animate-pulse' : 'bg-gray-500'}`}></div>
-                        <span className="text-xs text-gray-400">{isConnected ? t('integrationsConnected') : t('agentStatusInactive')}</span>
+                        <span className="text-xs text-gray-300">{isConnected ? t('integrationsConnected') : t('agentStatusInactive')}</span>
                     </div>
                 </div>
             </div>
@@ -487,12 +469,12 @@ export const BotAgent: React.FC<BotAgentProps> = ({ history, setHistory }) => {
                     status={agentStatusShort}
                 />
             </div>
-            <p className="text-center text-xs text-gray-500">{t('agentKeepTabOpen')}</p>
+            <p className="text-center text-xs text-gray-400">{t('agentKeepTabOpen')}</p>
 
             {/* Integrations Panel */}
             <div className="border-t border-gray-700 pt-6">
                 <h3 className="text-xl font-bold text-amber-400 mb-2">{t('integrationsTitle')}</h3>
-                <p className="text-sm text-gray-400 mb-4">{t('integrationsDescription')}</p>
+                <p className="text-sm text-gray-300 mb-4">{t('integrationsDescription')}</p>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <IntegrationCard 
@@ -506,7 +488,7 @@ export const BotAgent: React.FC<BotAgentProps> = ({ history, setHistory }) => {
                         icon={<TikTokIcon className={`h-6 w-6 ${isTiktokConnected ? 'text-pink-500' : 'text-gray-500'}`} />} 
                     />
                 </div>
-                <p className="text-xs text-gray-500 mt-3 italic text-center">{t('integrationsInfo')}</p>
+                <p className="text-xs text-gray-400 mt-3 italic text-center">{t('integrationsInfo')}</p>
             </div>
         </div>
     );

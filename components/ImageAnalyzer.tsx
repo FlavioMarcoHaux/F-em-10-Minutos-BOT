@@ -59,7 +59,7 @@ export const ImageAnalyzer: React.FC = () => {
   return (
     <div className="bg-gray-800 p-6 rounded-xl shadow-lg animate-fade-in">
       <h2 className="text-2xl font-bold text-amber-400 mb-4">{t('imageTitle')}</h2>
-      <p className="text-gray-400 mb-4">
+      <p className="text-gray-300 mb-4">
         {t('imageDescription')}
       </p>
 
@@ -71,7 +71,7 @@ export const ImageAnalyzer: React.FC = () => {
           {previewUrl ? (
             <img src={previewUrl} alt="Preview" className="max-h-full max-w-full object-contain rounded" />
           ) : (
-            <p className="text-gray-500">{t('imageUpload')}</p>
+            <p className="text-gray-300">{t('imageUpload')}</p>
           )}
         </div>
         <input
@@ -89,7 +89,7 @@ export const ImageAnalyzer: React.FC = () => {
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
           placeholder={t('imagePlaceholder')}
-          className="flex-grow bg-gray-700 text-white placeholder-gray-500 p-3 rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-amber-500 transition"
+          className="flex-grow bg-gray-700 text-white placeholder-gray-400 p-3 rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-amber-500 transition"
           disabled={isLoading}
         />
         <button
@@ -113,7 +113,7 @@ export const ImageAnalyzer: React.FC = () => {
       {analysis && (
         <div className="mt-6 p-6 bg-gray-900 rounded-lg border border-gray-700 max-h-96 overflow-y-auto" aria-live="polite">
           <h3 className="text-xl font-semibold text-amber-300 mb-3">{t('imageHeader')}</h3>
-          <p className="text-gray-300 whitespace-pre-wrap leading-relaxed">{analysis}</p>
+          <p className="text-gray-100 whitespace-pre-wrap leading-relaxed">{analysis}</p>
         </div>
       )}
     </div>
